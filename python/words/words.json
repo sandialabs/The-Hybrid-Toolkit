@@ -1,0 +1,112 @@
+[{
+    "_alias" : "words_db",
+    "_jsontype": "hybrid.db.mongodb",
+    "uuid": "words",
+    "host" : "http://localhost:27017",
+    "database" : "words",
+    "type" : "mongodb",
+    "push_views" : true,
+    "create" : true,
+    "delete_existing" : false,
+    "staging_suffix" : "",
+    "log_level" : 4
+},
+{
+    "_alias" : "model_words_db",
+    "_jsontype": "hybrid.db.mongodb",
+    "uuid": "model_words",
+    "host" : "http://localhost:27017",
+    "database" : "model_words",
+    "type" : "mongodb",
+    "push_views" : true,
+    "create" : true,
+    "delete_existing" : false,
+    "staging_suffix" : "",
+    "log_level" : 4
+},
+{
+    "_alias" : "words_models_db",
+    "_jsontype": "hybrid.db.mongodb",
+    "uuid": "words_models",
+    "host" : "http://localhost:27017",
+    "database" : "words_models",
+    "type" : "mongodb",
+    "push_views" : true,
+    "create" : true,
+    "delete_existing" : false,
+    "staging_suffix" : "",
+    "log_level" : 4
+},
+{
+    "_alias" : "vowel_worker",
+    "_jsontype": "vowels.VowelCounter",
+    "name" : "vowel_worker"
+},
+{
+    "_alias" : "scrabble_worker",
+    "_jsontype": "scrabble.ScrabbleScore",
+    "name" : "scrabble_worker"
+},
+{
+    "_alias" : "raw_words_db_query_info",
+    "_jsontype" : "_json",
+    "db_type":"mongodb",
+    "db_host":"http://localhost:27017",
+    "db_name":"words",
+    "query_name":"raw_words",
+    "query_find_list":[],
+    "query_except_list":["tag_raw_words"]
+},
+{
+    "_alias" : "attribute_index",
+    "_jsontype": "hybrid.worker.attribute_indexer.attribute_index",
+    "name" : "attribute_index",
+    "host" : "http://localhost:27017",
+    "database" : "words_models_db",
+    "db_type" : "mongodb",
+    "attributes_to_index" : ["word","vowel_worker:count"],
+    "values_to_index" : [],
+    "count_threshold" : 1,
+    "model_observations_manager_name" : "words_observations_manager"
+},
+{
+    "_alias" : "attribute_indexer",
+    "_jsontype": "hybrid.worker.attribute_indexer.attribute_indexer",
+    "name" : "attribute_indexer",
+    "db" : "_alias_words_models_db",
+    "index_uuid" : false,
+    "update_index" : true,
+    "model" : "_alias_attribute_index",
+    "model_db_type" : "mongodb",
+    "model_db_host" : "http://localhost:27017",
+    "model_db_name" : "words_models_db",
+    "model_observations_manager_name" : "words_observations_manager"
+},
+{
+    "_alias" : "words_observations_manager",
+    "_jsontype": "hybrid.model.db_management_model",
+    "uuid" : "words_observations_manager",
+    "database" : "words_models_db",
+    "host" : "http://localhost:27017",
+    "db_type" : "mongodb",
+    "query_info_list" : [{"db_type":"mongodb","db_host":"http://localhost:27017","db_name":"model_words","query_name":"model_words_all","query_find_list":[],"query_except_list":[]}],
+    "target_db_name" : "foo",
+    "target_db_host" : "http://localhost:27017",
+    "target_db_type" : "mongodb"
+},
+{
+    "_alias" : "word_processor_manager",
+    "_jsontype": "hybrid.manager.manager",
+    "name" : "words_manager",
+    "workers" : ["_alias_vowel_worker","_alias_scrabble_worker","_alias_attribute_indexer"],
+    "query" : "raw_words",
+    "input_tag_list" : [],
+    "output_tag_list" : ["tag_raw_words"],
+    "input_db" : "_alias_words_db",
+    "output_db" : "_alias_words_db",
+    "static" : false,
+    "debug" : true,
+    "observation_limit" : 200,
+    "worker_threads" : 1,
+    "iteration_sleep" : 0.5
+}]

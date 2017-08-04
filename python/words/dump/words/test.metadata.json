@@ -1,0 +1,1 @@
+{ "indexes" : [ { "v" : 1, "key" : { "_dataBlobID" : 1 }, "ns" : "words.test", "name" : "_id_" } ] }

@@ -1,0 +1,12 @@
+import hybrid
+from hybrid import db
+m=db.mongodb()
+m.open()
+m.getDBName()
+foo=hybrid.data_blob.create(uuid="foo")
+foo.setMetaData("weight",180)
+m.storeDataBlob(foo)
+
+a=m.loadDataBlob("foo")
+a.getMetaData("_id")
+a.getMetaData("weight")
